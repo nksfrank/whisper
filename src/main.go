@@ -23,6 +23,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 }
 func main() {
 	http.HandleFunc("/", indexHandler)
+	http.Handle("/js", http.StripPrefix("/js/", http.FileServer(http.Dir("public/js"))))
+	http.Handle("/css", http.StripPrefix("/css/", http.FileServer(http.Dir("public/css"))))
 	err := http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Fatal("ListenAndSErve:", err)
