@@ -4,13 +4,13 @@ services:
   web:
     image: nksfrank/whisper
     ports:
-      - "80:80"
+      - "81:80"
     depends_on:
       - "redis"
     networks:
       - "frontend"
     deploy:
-      replicas: 2
+      replicas: 1
       restart_policy:
         condition: on-failure
 

@@ -5,7 +5,7 @@ services:
     build: .
     image: nksfrank/whisper
     ports:
-      - "80:80"
+      - "81:80"
     networks:
       - "frontend"
 
