@@ -14,7 +14,7 @@ var (
 
 func renderTemplate(w http.ResponseWriter, tmpl string) {
 	if err := templates.ExecuteTemplate(w, tmpl+".html", nil); err != nil {
-		http.Error(w, e.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
