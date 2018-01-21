@@ -1,20 +1,20 @@
 package main
 
 import (
-	"net/http"
-	"log"
-	"html/template"
-	"regexp"
-	"github.com/go-redis/redis"
-	"time"
-	"github.com/satori/go.uuid"
-	"errors"
-	"strings"
-	"crypto/rand"
 	"crypto/aes"
-	"io"
 	"crypto/cipher"
+	"crypto/rand"
 	"encoding/hex"
+	"errors"
+	"github.com/go-redis/redis"
+	"github.com/satori/go.uuid"
+	"html/template"
+	"io"
+	"log"
+	"net/http"
+	"regexp"
+	"strings"
+	"time"
 )
 
 var (
@@ -22,11 +22,12 @@ var (
 	validPath = regexp.MustCompile("^/([a-zA-Z0-9-_]{36})/([a-zA-Z0-9-_]+)$")
 
 	ErrEncryptionFailed = errors.New("encryption failed")
-	ErrWriteFailed = errors.New("writing	failed")
-	ErrUnpad = errors.New("unpad error")
+	ErrWriteFailed      = errors.New("writing	failed")
+	ErrUnpad            = errors.New("unpad error")
 )
 
 var client *redis.Client
+var BASE_URL = "http://nikz.se/"
 
 func set(token string, payload []byte, ttl time.Duration) error {
 	if err := client.Set(token, payload, ttl).Err(); err != nil {
@@ -143,7 +144,7 @@ func secretHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := strings.Join([]string{storageKey, hex.EncodeToString(hashKey)}, "/")
+	token := strings.Join(BASE_URL, []string{storageKey, hex.EncodeToString(hashKey)}, "/")
 	renderTemplate(w, "index", token)
 }
 
@@ -161,9 +162,9 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 
 func main() {
 	client = redis.NewClient(&redis.Options{
-		Addr: "redis:6379",
+		Addr:     "redis:6379",
 		Password: "",
-		DB: 0})
+		DB:       0})
 	_, err := client.Ping().Result()
 	if err != nil {
 		panic(err)
