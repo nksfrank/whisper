@@ -144,7 +144,7 @@ func secretHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := strings.Join(BASE_URL, []string{storageKey, hex.EncodeToString(hashKey)}, "/")
+	token := strings.Join([]string{BASE_URL, storageKey, hex.EncodeToString(hashKey)}, "/")
 	renderTemplate(w, "index", token)
 }
 
