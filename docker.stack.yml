@@ -2,7 +2,7 @@ version: "3.3"
 
 services:
   web:
-    image: nksfrank/whisper
+    image: niklasfrank/whisper
     ports:
       - "81:80"
     depends_on:
@@ -13,6 +13,8 @@ services:
       replicas: 1
       restart_policy:
         condition: on-failure
+    environment:
+      - VIRTUAL_HOST=whisper.nikz.se
 
   redis:
     image: redis:3.2-alpine

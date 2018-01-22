@@ -3,7 +3,7 @@ version: "3.3"
 services:
   web:
     build: .
-    image: nksfrank/whisper
+    image: niklasfrank/whisper
     ports:
       - "81:80"
     networks:
