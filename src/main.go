@@ -27,7 +27,7 @@ var (
 )
 
 var client *redis.Client
-var BASE_URL = "http://nikz.se/"
+var BASE_URL = "http://whisper.nikz.se"
 
 func set(token string, payload []byte, ttl time.Duration) error {
 	if err := client.Set(token, payload, ttl).Err(); err != nil {
