@@ -3,4 +3,4 @@ language: go
 go:
   - 1.7.x
 env:
-  - REDIS_ADDR: redis HOST_URL: http://localhost
+  - REDIS_ADDR=redis HOST_URL=http://localhost
