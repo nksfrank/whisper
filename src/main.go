@@ -12,6 +12,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -163,7 +164,7 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 
 func main() {
 	client = redis.NewClient(&redis.Options{
-		Addr:     []string{REDIS_ADDRESS, ":6379"},
+		Addr:     REDIS_ADDRESS,
 		Password: "",
 		DB:       0})
 	_, err := client.Ping().Result()
