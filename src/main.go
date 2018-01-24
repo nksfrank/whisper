@@ -24,10 +24,11 @@ var (
 	ErrEncryptionFailed = errors.New("encryption failed")
 	ErrWriteFailed      = errors.New("writing	failed")
 	ErrUnpad            = errors.New("unpad error")
-)
 
-var client *redis.Client
-var BASE_URL = "http://whisper.nikz.se"
+	client        *redis.Client
+	REDIS_ADDRESS string
+	HOST_URL      string
+)
 
 func set(token string, payload []byte, ttl time.Duration) error {
 	if err := client.Set(token, payload, ttl).Err(); err != nil {
@@ -144,7 +145,7 @@ func secretHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token := strings.Join([]string{BASE_URL, storageKey, hex.EncodeToString(hashKey)}, "/")
+	token := strings.Join([]string{HOST_URL, storageKey, hex.EncodeToString(hashKey)}, "/")
 	renderTemplate(w, "index", token)
 }
 
@@ -162,7 +163,7 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 
 func main() {
 	client = redis.NewClient(&redis.Options{
-		Addr:     "redis:6379",
+		Addr:     []string{REDIS_ADDRESS, ":6379"},
 		Password: "",
 		DB:       0})
 	_, err := client.Ping().Result()
@@ -175,4 +176,9 @@ func main() {
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
+}
+
+func init() {
+	REDIS_ADDRESS = os.Getenv("REDIS_ADDRESS")
+	HOST_URL = os.Getenv("HOST_URL")
 }
