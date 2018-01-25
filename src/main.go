@@ -163,7 +163,7 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 	renderTemplate(w, "index", string(pw))
 }
 
-func healtCheckhHandler(w http.ResponseWriter, r *http.Request) {
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := client.Ping().Result(); err != nil {
 		http.Error(w, ErrHealthFail, http.StatusServiceUnavailable)
 		return
