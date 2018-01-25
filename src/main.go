@@ -165,7 +165,7 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 
 func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := client.Ping().Result(); err != nil {
-		http.Error(w, ErrHealthFail, http.StatusServiceUnavailable)
+		http.Error(w, ErrHealthFail.Error(), http.StatusServiceUnavailable)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
