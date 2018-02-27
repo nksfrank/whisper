@@ -25,6 +25,7 @@ var (
 	ErrEncryptionFailed = errors.New("encryption failed")
 	ErrWriteFailed      = errors.New("writing	failed")
 	ErrUnpad            = errors.New("unpad error")
+	ErrHealthFail       = errors.New("health: could not reach db")
 
 	client        *redis.Client
 	REDIS_ADDRESS string
@@ -162,6 +163,14 @@ func revealHandler(w http.ResponseWriter, r *http.Request, token, key string) {
 	renderTemplate(w, "index", string(pw))
 }
 
+func healthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	if _, err := client.Ping().Result(); err != nil {
+		http.Error(w, ErrHealthFail.Error(), http.StatusServiceUnavailable)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+}
+
 func main() {
 	client = redis.NewClient(&redis.Options{
 		Addr:     REDIS_ADDRESS,
@@ -173,6 +182,7 @@ func main() {
 	}
 
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/health", healthCheckHandler)
 	go http.ListenAndServeTLS(":443", "/run/secrets/server.cert", "/run/secrets/server.key", nil)
 	err = http.ListenAndServe(":80", nil)
 	if err != nil {
