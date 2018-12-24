@@ -1,14 +1,15 @@
-FROM golang:apline AS builder
-WORKDIR /src
+FROM golang:alpine AS builder
+RUN apk update && apk add --no-cache git
+RUN adduser -D -g '' whisperuser
 COPY ./src /src
+WORKDIR /src
+RUN go get -d -v
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o /go/bin/whisper
 
-RUN go-wrapper download
-RUN go-wrapper install
-RUN go build -o goapp
-
-FROM alpine
-WORKDIR /app
-COPY --from=builder /src/goapp /app
+FROM scratch
+COPY --from=builder /etc/passwd /etc/passwd
+COPY --from=builder /go/bin/whisper /go/bin/whisper
+USER whisperuser
 
 EXPOSE 80
-ENTRYPOINT ./goapp
+ENTRYPOINT ["/go/bin/whisper"]
