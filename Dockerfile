@@ -1,11 +1,14 @@
-FROM golang
-
-WORKDIR /go/src/github.com/nksfrank/whisper/src/
-COPY ./src /go/src/github.com/nksfrank/whisper/src
+FROM golang:apline AS builder
+WORKDIR /src
+COPY ./src /src
 
 RUN go-wrapper download
 RUN go-wrapper install
+RUN go build -o goapp
+
+FROM alpine
+WORKDIR /app
+COPY --from=builder /src/goapp /app
 
 EXPOSE 80
-
-CMD ["go-wrapper", "run"] # ["app"]
+ENTRYPOINT ./goapp
