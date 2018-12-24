@@ -9,6 +9,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflag
 FROM scratch
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /go/bin/whisper /go/bin/whisper
+COPY --from=builder /src/views /go/bin/whisper
 USER whisperuser
 
 EXPOSE 80
