@@ -1,16 +1,19 @@
 FROM golang:alpine AS builder
 RUN apk update && apk add --no-cache git
-RUN adduser -D -g '' whisperuser
+RUN mkdir /user && \
+    echo 'nobody:x:65534:65534:nobody:/:' > /user/passwd && \
+    echo 'nobody:x:65534:' > /user/group
+
 COPY ./src /src
 WORKDIR /src
 RUN go get -d -v
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o /go/bin/whisper
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -installsuffix cgo -ldflags="-w -s" -o main .
 
-FROM scratch
-COPY --from=builder /src/views /go/bin/whisper/views
-COPY --from=builder /etc/passwd /etc/passwd
-COPY --from=builder /go/bin/whisper /go/bin/whisper
-USER whisperuser
-
-EXPOSE 80
-ENTRYPOINT ["/go/bin/whisper"]
+FROM alpine
+COPY --from=builder /src/views /app/views
+COPY --from=builder /user/group /user/passwd /etc/
+COPY --from=builder /src/main /app/
+EXPOSE 8080
+USER nobody:nobody
+WORKDIR /app
+ENTRYPOINT ["./main"]
