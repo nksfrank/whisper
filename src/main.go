@@ -184,7 +184,7 @@ func main() {
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/health", healthCheckHandler)
 	go http.ListenAndServeTLS(":443", "/run/secrets/server.cert", "/run/secrets/server.key", nil)
-	err = http.ListenAndServe(":80", nil)
+	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe:", err)
 	}
